@@ -86,13 +86,8 @@ cat("Percentage of markers with MAF below 0.01:", percentage_below_001, "%\n")
 ```
 
 The MAF does not follow an uniform distribution. 
-The observed pattern in the histogram of MAFs suggests that the majority of genetic variants have relatively low frequencies in the population, as indicated by the concentration of values between 0 and 0.17. This is consistent with a common trend in human populations, where a large number of genetic variants are rare.
 
-The gradual decrease in frequencies beyond 0.17 implies that as the MAF increases, the number of variants with those higher frequencies decreases. This is a characteristic feature of allele frequency distributions, reflecting the fact that rare variants are more abundant than common variants.
-
-The peak observed at 0.5 is interesting and may indicate the presence of a substantial number of variants with a MAF of 0.5. A MAF of 0.5 suggests that the variant is present in approximately half of the population, which is a unique feature in allele frequency distributions. This could be due to factors such as balancing selection, where heterozygotes have a selective advantage over homozygotes, leading to the maintenance of the variant at intermediate frequencies in the population.
-
-In summary, the observed pattern in the MAF histogram, with a concentration of values at lower frequencies and a peak around 0.5, reflects the diversity of allele frequencies in the studied population. The shape of the histogram is influenced by factors such as mutation rates, genetic drift, selection pressures, and population history.
+A possible explaination for this pattern could that most geneteric variants appear infrequently because they are unlikely to change in human population. The peak at 0.5 means that this genetic variant is very common in population. So it doesn't seem to be harmful for the population. 
 
 ### Question 5
 
@@ -220,44 +215,8 @@ plot(heterozygosity_data$He, heterozygosity_data$Ho, xlab = "Expected Heterozygo
      main = "Observed vs. Expected Heterozygosity for All STRs")
 ```
 
-He values are very different from H0 values and it's quite surprising to observa that H0 values is superior to 0.96 for all STR locus and even He is superior to 0.5.
+He values are very different from H0 values and it's quite surprising to observe that H0 values is superior to 0.96 for all STR locus and even He is superior to 0.5.
 
 ### Question 6
 
-Heterozygosity Levels:
-STR Database: You mentioned that the 
-H
-e
-H 
-e
-​	
-  and 
-H
-o
-H 
-o
-​	
-  values for the STR database are significantly higher than 0.5. This could be due to the characteristics of STRs, which are known for high levels of polymorphism and heterozygosity.
-SNP Database: The SNP database, on the other hand, seems to have 
-H
-e
-H 
-e
-​	
-  and 
-H
-o
-H 
-o
-​	
-  values that are not substantially higher than 0.5. SNPs, being bi-allelic markers, generally have lower heterozygosity compared to multi-allelic markers like STRs.
-Database Size:
-SNP Database: You mentioned that the SNP database is much larger in terms of observations compared to the STR database. This is not surprising, as SNP markers are typically more abundant in the genome than STRs.
-STR Database: Even though the STR database may have fewer observations, the high heterozygosity levels suggest that the loci selected are highly polymorphic.
-Interpretation:
-STRs: The high heterozygosity observed in STRs is consistent with their nature as highly variable markers. The variability in the number of repeats in STR loci contributes to high heterozygosity levels.
-SNPs: SNPs, being bi-allelic, generally have lower heterozygosity, especially if they are common in the population.
-Genetic Marker Characteristics:
-STRs: STRs are known for their high mutation rates, which contributes to the observed variability.
-SNPs: SNPs are more stable and less prone to mutation. Common SNPs may have lower heterozygosity because one allele might be significantly more common than the other in a population.
-In summary, the differences in heterozygosity levels between the SNP and STR databases are likely influenced by the inherent characteristics of these markers. The higher heterozygosity in STRs is consistent with their known high polymorphism, while the SNP database, being more numerous, may have lower but more stable heterozygosity levels. The size of the databases and the nature of the markers play key roles in these observations.
+There seem to be big differences in heterozygosity levels between the SNP and STR databases. The STR database has much higher heterozygosity levels compared to the SNP database. This could be due to the inherent characteristics of the markers, the size of the databases, or both.
