@@ -1,4 +1,9 @@
-# Hendrick Wellman
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+# Hendrik Wellmann
 # Antonin Rosa
 
 # Assigment BSG Stats 1
@@ -21,6 +26,8 @@ missing_percentage <- mean(is.na(genetic_data_rs)) * 100
 cat("Number of variants in the database:", num_variants, "\n")
 cat("Percentage of missing data:", missing_percentage, "%\n")
 ```
+
+For the missing, we decided to compute of the value which are equal to NA under all the number of value present in the table.
 
 ### Question 2
 
@@ -78,6 +85,15 @@ cat("Percentage of markers with MAF below 0.05:", percentage_below_005, "%\n")
 cat("Percentage of markers with MAF below 0.01:", percentage_below_001, "%\n")
 ```
 
+The MAF does not follow an uniform distribution. 
+The observed pattern in the histogram of MAFs suggests that the majority of genetic variants have relatively low frequencies in the population, as indicated by the concentration of values between 0 and 0.17. This is consistent with a common trend in human populations, where a large number of genetic variants are rare.
+
+The gradual decrease in frequencies beyond 0.17 implies that as the MAF increases, the number of variants with those higher frequencies decreases. This is a characteristic feature of allele frequency distributions, reflecting the fact that rare variants are more abundant than common variants.
+
+The peak observed at 0.5 is interesting and may indicate the presence of a substantial number of variants with a MAF of 0.5. A MAF of 0.5 suggests that the variant is present in approximately half of the population, which is a unique feature in allele frequency distributions. This could be due to factors such as balancing selection, where heterozygotes have a selective advantage over homozygotes, leading to the maintenance of the variant at intermediate frequencies in the population.
+
+In summary, the observed pattern in the MAF histogram, with a concentration of values at lower frequencies and a peak around 0.5, reflects the diversity of allele frequencies in the studied population. The shape of the histogram is influenced by factors such as mutation rates, genetic drift, selection pressures, and population history.
+
 ### Question 5
 
 ```{r}
@@ -99,27 +115,35 @@ Theoretical range of variation for H0 is [0, 0.5]
 
 ### Question 6
 
-```{r}
-library(HardyWeinberg)
-data(NistSTRs)
-dimensions <- dim(NistSTRs)
-num_individuals <- dimensions[1]  
-num_STRs <- dimensions[2]
-cat("Number of individuals in the database:", num_individuals, "\n")
-cat("Number of STRs in the database:", num_STRs, "\n")
+````{r}
+He_values <- numeric(length(genetic_data_rs))
+
+for (i in 1:length(genetic_data_rs)) {
+  column <- genetic_data_rs[[i]]
+  genotypes <- column[-1]
+  allele_freq <- table(genotypes) / length(genotypes)
+  He <- 1 - sum(allele_freq^2)
+  He_values[i] <- He
+}
+
+hist(He_values, breaks = 20, xlab = "Expected Heterozygosity (He)", main = "Histogram of Expected Heterozygosity (He)")
+
+average_He <- mean(He_values)
+cat("Average Expected Heterozygosity (He) for this database:", average_He, "\n")
 ```
+
+Theoretical range of variation for H0 is [0, 0.5]
 
 ## Second data set 
 
 ### Question 1
 
-
 ```{r}
 library(HardyWeinberg)
 data(NistSTRs)
 dimensions <- dim(NistSTRs)
 num_individuals <- dimensions[1]  
-num_STRs <- dimensions[2]
+num_STRs <- dimensions[2] / 2
 cat("Number of individuals in the database:", num_individuals, "\n")
 cat("Number of STRs in the database:", num_STRs, "\n")
 ```
@@ -168,6 +192,7 @@ calculate_He <- function(STR_locus) {
   He <- 1 - sum((allele_freq / sum(allele_freq))^2)
   return(He)
 }
+
 He_values <- sapply(NistSTRs, calculate_He)
 
 hist(He_values, breaks = 20, xlab = "Expected Heterozygosity (He)", main = "Histogram of Expected Heterozygosity (He) across STRs")
@@ -185,6 +210,7 @@ calculate_Ho <- function(STR_locus) {
   Ho <- 1 - (num_unique_alleles - 1) / (2 * total_individuals)
   return(Ho)
 }
+
 Ho_values <- sapply(NistSTRs, calculate_Ho)
 
 heterozygosity_data <- data.frame(He = He_values, Ho = Ho_values)
@@ -193,3 +219,45 @@ print(heterozygosity_data)
 plot(heterozygosity_data$He, heterozygosity_data$Ho, xlab = "Expected Heterozygosity (He)", ylab = "Observed Heterozygosity (Ho)", 
      main = "Observed vs. Expected Heterozygosity for All STRs")
 ```
+
+He values are very different from H0 values and it's quite surprising to observa that H0 values is superior to 0.96 for all STR locus and even He is superior to 0.5.
+
+### Question 6
+
+Heterozygosity Levels:
+STR Database: You mentioned that the 
+H
+e
+H 
+e
+​	
+  and 
+H
+o
+H 
+o
+​	
+  values for the STR database are significantly higher than 0.5. This could be due to the characteristics of STRs, which are known for high levels of polymorphism and heterozygosity.
+SNP Database: The SNP database, on the other hand, seems to have 
+H
+e
+H 
+e
+​	
+  and 
+H
+o
+H 
+o
+​	
+  values that are not substantially higher than 0.5. SNPs, being bi-allelic markers, generally have lower heterozygosity compared to multi-allelic markers like STRs.
+Database Size:
+SNP Database: You mentioned that the SNP database is much larger in terms of observations compared to the STR database. This is not surprising, as SNP markers are typically more abundant in the genome than STRs.
+STR Database: Even though the STR database may have fewer observations, the high heterozygosity levels suggest that the loci selected are highly polymorphic.
+Interpretation:
+STRs: The high heterozygosity observed in STRs is consistent with their nature as highly variable markers. The variability in the number of repeats in STR loci contributes to high heterozygosity levels.
+SNPs: SNPs, being bi-allelic, generally have lower heterozygosity, especially if they are common in the population.
+Genetic Marker Characteristics:
+STRs: STRs are known for their high mutation rates, which contributes to the observed variability.
+SNPs: SNPs are more stable and less prone to mutation. Common SNPs may have lower heterozygosity because one allele might be significantly more common than the other in a population.
+In summary, the differences in heterozygosity levels between the SNP and STR databases are likely influenced by the inherent characteristics of these markers. The higher heterozygosity in STRs is consistent with their known high polymorphism, while the SNP database, being more numerous, may have lower but more stable heterozygosity levels. The size of the databases and the nature of the markers play key roles in these observations.
