@@ -102,12 +102,18 @@ most_significant_p_value <- hwe_results[most_significant_index]
 cat("Most Significant SNP:", most_significant_snp_value, "\n")
 cat("P-value for Most Significant SNP:", most_significant_p_value, "\n")
 
-variant_column <- genetic_data_rs[most_significant_index]
-genotype_counts <- table(variant_column)
+variant_column <- genetic_data_rs[[most_significant_index]]
 
-genotype_counts <- genotype_counts[c("0", "1", "2")]
+
+
+variant_column <- factor(variant_column, levels = c(0, 1, 2), labels = c("AA", "AB", "BB"))
+
+
+genotype_counts <- table(variant_column)
 print(genotype_counts)
-#In which sense is this genotypic composition unusual?
+#there are no individuals with the heterozygous genotype (AB). 
+#In a population that is in Hardy-Weinberg equilibrium , you would expect a balance of genotypes.
+#This might suggest the abscence of HWE for this variant.
 # Question 7
 
 inbreeding_coefficients <- c()
@@ -150,8 +156,10 @@ alpha_numbers <- c(0.10, 0.05, 0.01, 0.001)
 for (alpha in alpha_numbers) {
     # Calculate the percentage of significant SNPs (p-value < 0.05)
     significant_snps_percentage <- mean(hwe_results < alpha) * 100
-    cat("Number of significant SNPs at alpha = ", alpha, ": ", sum(hwe_results < alpha), "%\n")
+    cat("Number of significant SNPs at alpha = ", alpha, ": ", sum(hwe_results < alpha), "\n")
     cat("Percentage of significant SNPs at alpha = ", alpha, ": ", significant_snps_percentage, "%\n")
     
-  }
+}
+
+#As expected the number of significant SNPs is smaller with smaller alpha. The results seem to fit the expectations for this dataset.
 
