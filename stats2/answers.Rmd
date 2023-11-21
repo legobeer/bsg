@@ -1,4 +1,6 @@
 # Question 1
+
+```{r}
 library(HardyWeinberg)
 library(data.table)
 
@@ -14,7 +16,9 @@ missing_percentage <- mean(is.na(genetic_data_rs)) * 100
 cat("Number of variants in the database:", num_variants, "\n")
 cat("Percentage of missing data:", missing_percentage, "%\n")
 
+```
 # Question 2
+```{r}
 
 monomorphic_variants <- sapply(genetic_data_rs, function(col) {
   cleaned_col <- col[-1]  # Remove the first element (variant name)
@@ -26,8 +30,10 @@ num_remaining_variants <- ncol(non_monomorphic_data)
 cat("Percentage of monomorphic variants:", percentage_monomorphic, "%\n")
 cat("Number of remaining variants:", num_remaining_variants, "\n")
 
-#
+```
 # Question 3
+```{r}
+
 
 variant_column_index <- which(genetic_data_rs[1, ] == "rs587756191_T")
 variant_column <- genetic_data_rs[[variant_column_index]]
@@ -51,8 +57,14 @@ print(exact_test_result)
 permutation_test_result <- HWPerm(table(variant_column))
 print(permutation_test_result)
 
-#The p-value is close to 1 for most tests. This leads to the conclusion that this variant is not in equilibrium.
+```
+The p-value is close to 1 for most tests. This leads to the conclusion that this variant is not in equilibrium.
+
+
 # Question 4 
+
+```{r}
+
 genetic_data_rs <- non_monomorphic_data
 genotype_counts_matrix <- matrix(NA, ncol = 3, nrow = ncol(genetic_data_rs))
 for (i in 1:ncol(genetic_data_rs)) {
@@ -66,7 +78,10 @@ for (i in 1:ncol(genetic_data_rs)) {
 
 colnames(genotype_counts_matrix) <- c("AA", "AB", "BB")
 
+```
 # Question 5
+```{r}
+
 genetic_data_no_header <- genetic_data_rs[-1, ]
 
 hwe_results <- c()
@@ -85,14 +100,20 @@ for (col_name in names(genetic_data_no_header)) {
   
   # Collect the p-value for each SNP
   hwe_results <- c(hwe_results, hwe_result)
-}
-
+  
 # Calculate the percentage of significant SNPs (p-value < 0.05)
 significant_snps_percentage <- mean(hwe_results < 0.05) * 100
 
 cat("Percentage of significant SNPs at alpha = 0.05:", significant_snps_percentage, "%\n")
-#You would expect 5% to be out of equilibrium. So the result is pretty close to this.
+
+
+}
+```
+You would expect 5% to be out of equilibrium. So the result is pretty close to this.
+
 # Question 6
+```{r}
+
 
 most_significant_index <- which.min(hwe_results)
 
@@ -107,8 +128,12 @@ genotype_counts <- table(variant_column)
 
 genotype_counts <- genotype_counts[c("0", "1", "2")]
 print(genotype_counts)
-#In which sense is this genotypic composition unusual?
+
+```
+In which sense is this genotypic composition unusual?
 # Question 7
+```{r}
+
 
 inbreeding_coefficients <- c()
 
@@ -144,7 +169,11 @@ qqnorm(inbreeding_coefficients, main = "Probability Plot of Inbreeding Coefficie
 qqline(inbreeding_coefficients)
 
 
+```
+Explain what distribution we expect and why?
 # Question 8
+```{r}
+
 alpha_numbers <- c(0.10, 0.05, 0.01, 0.001)
 
 for (alpha in alpha_numbers) {
@@ -154,4 +183,5 @@ for (alpha in alpha_numbers) {
     cat("Percentage of significant SNPs at alpha = ", alpha, ": ", significant_snps_percentage, "%\n")
     
   }
-
+```
+Explain results
