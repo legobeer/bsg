@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # Question 1
 
 ```{r}
@@ -172,7 +177,10 @@ qqline(inbreeding_coefficients)
 
 
 ```
-Explain what distribution we expect and why?
+The distribution of inbreeding coefficients (f) is influenced by various factors such as population structure, mating patterns, and the history of inbreeding. In theory, the distribution of f in a randomly mating population is expected to be centered around zero, but it may deviate from a normal distribution, especially in populations with a history of inbreeding.
+
+However we can see with the plot, there is a little deviation.
+
 # Question 8
 ```{r}
 
