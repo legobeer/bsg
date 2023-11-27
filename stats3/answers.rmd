@@ -19,8 +19,8 @@ library(genetics)
 library(HardyWeinberg)
 
 data <- read.table("FOXP2/FOXP2.dat", header = TRUE, sep = " ")
-num_individuals <- nrow(data)
-num_snps <- ncol(data)
+num_individuals <- nrow(data) -1
+num_snps <- ncol(data) - 1
 
 cat("Number of individuals:", num_individuals, "\n")
 cat("Number of SNPs:", num_snps, "\n")
@@ -41,7 +41,21 @@ The SNPs rs34684677 and rs2894715 show a strong genetic linkage, meaning that va
 
 #### Question 3
 
-Low LD (D = -0.05493703) suggests weak association between SNPs rs34684677 and rs2894715. Haplotypes are likely formed independently. Estimate haplotype frequencies from genotype frequencies. The most common haplotype has the highest estimated frequency. Provide genotype frequencies for detailed calculation.
+Low LD (D = -0.05493703) suggests weak association between SNPs rs34684677 and rs2894715. Haplotypes are likely formed independently. Estimate haplotype frequencies from genotype frequencies. The most common haplotype has the highest estimated frequency. Provide genotype frequencies for detailed calculation
+
+```{r}
+snp1 <- data$rs34684677
+snp2 <- data$rs2894715
+genotype_matrix <- cbind(substr(snp1, 1, 1), substr(snp1, 3, 3),
+                         substr(snp2, 1, 1), substr(snp2, 3, 3))
+
+snpnames <- c("snp1","snp2")
+haplo_freq <- haplo.em(genotype_matrix, locus.label=snpnames <- c("snp1","snp2"))
+print(haplo_freq)
+```
+
+The answer is SNP1=G and SNP2=T.
+
 
 #### Question 4
 
@@ -79,6 +93,7 @@ print(res)
 
 We can reject 18 variants.
 
+
 #### Question 5
 
 ```{r}
@@ -107,6 +122,8 @@ heatmap(r2_matrix, main = "LD Heatmap only with MAF >= 0.35", xlab = "Marker Ind
 
 ```{r}
 data <- read.table("APOE/APOE.dat", header = TRUE, sep = " ")
+num_individuals <- nrow(data) - 1
+num_snps <- ncol(data) - 1
 cat("Number of individuals:", num_individuals, "\n")
 cat("Number of SNPs:", num_snps, "\n")
 
@@ -116,8 +133,62 @@ cat("Percentage of missing data:", missing_percentage, "%\n")
 
 #### Question 2
 
-
+We can theorically find $2^{544}$.
 
 #### Question 3
 
+```{r}
+n_line <- nrow(data)
+n_col <- 2 * ncol(data)  
+Geno <- matrix(0, nrow = n_line, ncol = n_col)
 
+for (i in 1:ncol(data)) {
+  col_start <- (i - 1) * 2 + 1
+  Geno[, col_start] <- substr(data[, i], 1, 1)
+  Geno[, col_start + 1] <- substr(data[, i], 3, 3)
+}
+options(max.print = 100000)  
+
+haplo_freq <- haplo.em(Geno)
+print(haplo_freq)
+```
+
+There are 163 haplotypes possibles. The most frequent is number 6.
+
+#### Question 4
+
+```{r}
+bim_file <- "APOE/APOE.bim"
+bim_data <- read.table(bim_file, header = FALSE, stringsAsFactors = FALSE)
+
+genotype_matrix <- data[,-1]
+for (col in colnames(genotype_matrix)) {
+  genotype_matrix[[col]] <- genotype(genotype_matrix[[col]])
+}
+calculate_MAF <- function(genotype_counts) {
+  allele1 <- 2 * genotype_counts[[1]] + genotype_counts[[2]]
+  allele2 <- 2 * genotype_counts[[3]] + genotype_counts[[2]]
+  return (min(allele1, allele2) / (allele2 + allele1))
+}
+
+filter_index_MAF <- c()
+res <- 0
+for (i in 1:ncol(genotype_matrix)) {
+  alleles <- c(paste(bim_data$V5[[i]], "/", bim_data$V6[[i]], sep = ""))
+  count_gentoype <- MakeCounts(genotype_matrix[[i]], alleles = alleles, sep="/")
+  MAF <- calculate_MAF(count_gentoype)
+  if (MAF < 0.1) {
+    filter_index_MAF <- c(filter_index_MAF, i)
+  }
+}
+filter_index_MAF <- filter_index_MAF + 1
+tmp1 <- 2 * filter_index_MAF
+tmp2 <- 2 * filter_index_MAF + 1
+filter_index_MAF <- cbind(tmp1, tmp2)
+Geno_filtered <- Geno[, -filter_index_MAF]
+print(haplo.em(Geno_filtered))
+```
+
+There are only 22 haplotypes and the most frequent is number 5.
+
+Excluding genetic variants with a minor allele frequency (MAF) below 0.10 led to a significant reduction in the number of identified haplotypes, from 163 to 22. This reduction reflects a focus on more common variants in the population, excluding those with lower frequencies. The decrease suggests a loss of genetic diversity, as the excluded haplotypes were likely associated with less common variants in the studied population. The choice of the MAF threshold is crucial and may impact haplotype analysis outcomes, highlighting the need for careful consideration based on the study's objectives.
