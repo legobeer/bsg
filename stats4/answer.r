@@ -74,6 +74,7 @@ for (i in 1:num_runs) {
   stress_result <- c(stress_result, mds_result$stress)
 }
 
+
 plot(stress_result)
 
 # Question 9
@@ -89,4 +90,24 @@ for (i in 1:50) {
 }
 
 plot(stress_result)
+# 10
+num_runs <- 100
+stress_result <- c()
+point_result <- c()
+for (i in 1:num_runs) {
+  set.seed(i)  
+  random_matrix <- matrix(runif(n * m), nrow = n, ncol = m)
+  mds_result <- isoMDS(random_matrix, k = 2, trace=FALSE)
+  
+  stress_result <- c(stress_result, mds_result$stress)
+  point_result <- c(point_result, mds_result$points)
+}
+cat("best:", min(stress_result$stress))
 
+best_result = point_result[which.min(stress_result)]
+cat("worst:", max(stress_result))
+plot(stress_result)
+# 11
+
+correlation_matrix <- cor(best_result, nonmetric_mds_result$points)
+correlation_matrix
