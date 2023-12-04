@@ -9,7 +9,7 @@ output:
 
 ### Practical 4 Population Substructure
 
-#### Question 1 
+### Question 1 
 
 ```{r}
 library(MASS)
@@ -23,7 +23,7 @@ missing_percentage <- mean(is.na(data)) * 100
 cat("Percentage of missing data:", missing_percentage, "%\n")
 ```
 
-#### Question 2
+### Question 2
 
 ```{r}
 genotype_data <- data[-1, variant_cols_indices]
@@ -33,32 +33,41 @@ submatrix <- as.matrix(manhattan_dist_matrix)[1:5, 1:5]
 print(submatrix)
 ```
 
-#### Question 3
+### Question 3
 
-#### Question 4
+There is an inverse relationship between Manhattan distance and allele sharing. 
+That is, as Manhattan distance increases (indicating greater dissimilarity), allele sharing tends to decrease (indicating lower genetic similarity), and vice versa.
+
+### Question 4
 
 ```{r}
-mds_result <- cmdscale(manhattan_dist_matrix, k = 2)
-colors <- ifelse(mds_result[, 1] > 0, "red", "green")
-plot(mds_result[, 1], mds_result[, 2], col = colors, pch = 16, main = "MDS Plot", xlab = "Dimension 1", ylab = "Dimension 2")
-population1 <- sum(mds_result[, 1] > 0)
-population2 <- sum(mds_result[, 1] < 0)
-cat("Population 1 : ", population1, "%\n")
-cat("Population 2 : ", population2, "%\n")
+mds_result <- cmdscale(manhattan_dist_matrix, k = 2, eig=TRUE)
+colors <- ifelse(mds_result$points[ , 1] > 0, "red", "green")
+plot(mds_result$points[, 1], mds_result$points[, 2], col = colors, pch = 16, main = "MDS Plot", xlab = "Dimension 1", ylab = "Dimension 2")
+population1 <- sum(mds_result$points[, 1] > 0)
+population2 <- sum(mds_result$points[, 1] < 0)
+cat("Population 1 : ", population1, "\n")
+cat("Population 2 : ", population2, "\n")
 ```
 
 Two distinct subpopulations are observed.
 
-#### Question 5
+### Question 5
 
 ```{r}
-cat("Stress value:", isoMDS(manhattan_dist_matrix, k = 2)$stress
-, "\n")
+ev <- mds_result$eig
+gof <- mds_result$GOF
+print(gof)
 ```
 
-#### Question 6
+The goodness-of-fit (GOF) of the two-dimensional approximation to your distance matrix is a measure of how well the reduced-dimensional representation preserves the pairwise distances present in the original data. In the context of Multidimensional Scaling (MDS), GOF is often calculated using stress, a criterion that reflects the dissimilarity between the original distances and the distances in the reduced space.
+
+The values we got, suggest a relatively good fit.
+
+### Question 6
 
 ```{r}
+mds_result <- cmdscale(manhattan_dist_matrix, k = 2)
 observed_distances <- as.vector(manhattan_dist_matrix)
 estimated_distances <- as.vector(dist(mds_result))
 
@@ -72,7 +81,9 @@ abline(regression_model, col = "red")
 cat("Coefficient of Determination (R-squared):", summary(regression_model)$r.squared, "\n")
 ```
 
-#### Question 7
+We can observe that there is a big difference between the estimated distances and the observed distance.
+
+### Question 7
 
 ```{r}
 manhattan_matrix <- as.matrix(manhattan_dist_matrix)
@@ -88,10 +99,12 @@ text(nonmetric_mds_result$points[, 1], nonmetric_mds_result$points[, 2], labels 
 nonmetric_mds_result$stress
 ```
 
-#### Question 8
+It seems the data comes from a same population because we can see only one cluster. However, the stress value shows we should increase the dimension of our MDS.
+
+### Question 8
 
 ```{r}
-num_runs <- 150
+num_runs <- 10
 stress_result <- c()
 for (i in 1:num_runs) {
   set.seed(i)  
@@ -104,7 +117,9 @@ for (i in 1:num_runs) {
 plot(stress_result)
 ```
 
-#### Question 9
+We observe that in all the situation the stress value is very similar each time.
+
+### Question 9
 
 ```{r}
 
@@ -121,16 +136,44 @@ for (i in 1:50) {
 plot(stress_result)
 ```
 
+We need 18 dimensions.
 
-#### Question 10
-
-```{r}
-
-```
-
-
-#### Question 11
+### Question 10
 
 ```{r}
 
+num_runs <- 100
+stress_result <- c()
+point_result <- vector("list", num_runs)
+for (i in 1:num_runs) {
+  set.seed(i)  
+  random_matrix <- matrix(runif(n * m), nrow = n, ncol = m)
+  mds_result <- isoMDS(random_matrix, k = 2, trace=FALSE)
+  
+  stress_result <- c(stress_result, mds_result$stress)
+  point_result[[i]] <- mds_result$points
+}
+cat("best:", min(stress_result))
+best_result = point_result[which.min(stress_result)][[1]]
+cat("worst:", max(stress_result))
+worst_result = point_result[which.max(stress_result)][[1]]
+plot(best_result[, 1], best_result[, 2], pch = 16, main = "Best MDS Plot", xlab = "Dimension 1", ylab = "Dimension 2")
+plot(worst_result[, 1], worst_result[, 2], pch = 16, main = "Worst MDS Plot", xlab = "Dimension 1", ylab = "Dimension 2")
 ```
+
+You can see that the data for the best results is closer together than the data for the worst result (range -0.4 to  0.4 compared to range -1 to 1).
+
+### Question 11
+
+```{r}
+set.seed(which.min(stress_result))
+random_matrix <- matrix(runif(n * m), nrow = n, ncol = m)
+metric_result <- cmdscale(random_matrix, k = 2)
+correlation_matrix <- cor(best_result, metric_result)
+correlation_matrix
+```
+
+The strong positive correlations on the diagonal indicate that the overall patterns of variation in the first and second dimensions are similar between the metric and non-metric MDS solutions.
+However, the low correlation with the off-diagonal element suggests that there may be differences in the specific patterns of variation captured by these dimensions.
+
+The high positive correlations on the diagonal suggest that the two-dimensional solutions are capturing similar overall structures, even though there might be differences in the specific details of how points are arranged in the reduced space.
