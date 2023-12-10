@@ -1,14 +1,15 @@
 ---
-title: "answers"
-output: pdf_document
-date: "2023-12-10"
+output:
+  pdf_document: default
+  html_document: default
 ---
+
+
+# Practical 5 Statistical Genetics
 
 ## Antonin Rosa
 
 ## Hendrik Wellmann
-
-### Practical 5 Statistical Genetics
 
 # Question 1
 ```{r}
@@ -96,11 +97,11 @@ plot(allele_counts, risk, type = "b", pch = 19, col = "blue", main = "Risk of Di
 
 ```
 
-
+Based on the p-value for the codominant model we can reject the null hypothesis that the risk is the same for all genotypes. For the dominant model there is a p-value as low as for the co-dominant model and we can reject the null hypothesis that the risk of disease doesn't depend on the presence of a as well. The p-value for the recessive model is also very small but factor 10 bigger than the p-values for the other models. But it is still small enough that we can also reject the null hypothesis that  the risk does not depend on being homozygote.
 
 All models have significantly low p-values, indicating a strong association between the genetic variant and the studied effect. The codominant and dominant models appear to show slightly stronger associations than the recessive model.
 
- If the codominant model fitted perfectly with our data, it should form a straight line whith a null slope. Additionally, in the dominant model, a significant difference in risk is observed when at least one allele a is present. Hence, the dominant model appears to be the better fit.
+ If the codominant model fitted perfectly with our data, it should form a straight line with a null slope. Additionally, in the dominant model, a significant difference in risk is observed when at least one allele a is present. Hence, the dominant model appears to be the better fit.
 
 # Question 4
 
@@ -129,4 +130,4 @@ In other words, the significant trend observed in the distribution of genotypes 
 
 # Question 5
 
-The results got we the Armitage trend test proved there is an association for this marker on the disease. Moreover, like we told before the best model was the dominant. We can declare, with the low p-value of the Armitage trend test, the association do exist and that the risk of being sick increases a lot if you have an allele a.
+The results got we the Armitage trend test proved there is an association for this marker on the disease. Moreover, like we told before the best model was the dominant. We can declare, with the low p-value of the Armitage trend test, the association does exist and that the risk of being sick increases a lot if you have an allele a.
