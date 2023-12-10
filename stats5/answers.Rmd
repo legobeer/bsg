@@ -1,5 +1,17 @@
-# Question 1
+---
+title: "answers"
+output: pdf_document
+date: "2023-12-10"
+---
 
+## Antonin Rosa
+
+## Hendrik Wellmann
+
+### Practical 5 Statistical Genetics
+
+# Question 1
+```{r}
 X <- matrix(c(112, 278, 150, 206, 348, 150), nrow = 2, byrow = TRUE)
 colnames(X) <- c("AA","Aa","aa")
 rownames(X) <- c("Cases","Controls")
@@ -17,8 +29,11 @@ cat("Chi-square test results:\n")
 cat("P-value:", p_value, "\n")
 cat("Odds Ratio:", odds_ratio, "\n")
 
-# Question 2 and 3
+```
+The small p-value suggests a strong association of the alleles with the disease. The odds ratio of 0.74 tells us that the disease is more common for people with the allele aa.
 
+# Question 2
+```{r}
 # codominant test
 test <- chisq.test(X)
 p_value <- test$p.value
@@ -31,6 +46,9 @@ risk <- odds_ratios / (1 + odds_ratios)
 
 allele_counts <- c(0, 1, 2)
 plot(allele_counts, risk, type = "b", pch = 19, col = "blue", main = "Risk of Disease by Number of M Alleles", xlab = "Genotype", ylab = "Risk")
+```
+We reject the null hypothesis that the probability of disease with all the genotypes is the same.
+```{r}
 
 # Dominant test
 Y <- cbind(X[,1],X[,2]+X[,3])
@@ -49,7 +67,9 @@ risk <- odds_ratios / (1 + odds_ratios)
 
 allele_counts <- c(0, 1, 2)
 plot(allele_counts, risk, type = "b", pch = 19, col = "blue", main = "Risk of Disease by Number of M Alleles", xlab = "Genotype", ylab = "Risk")
+```
 
+```{r}
 # Recessive test
 Y <- cbind(X[,1]+X[,2],X[,3])
 colnames(Y) <- c("AA or Aa","aa")
@@ -58,6 +78,10 @@ test <- chisq.test(Y)
 p_value <- test$p.value
 cat("Recessive test results:\n")
 cat("P-value:", p_value, "\n")
+
+```
+
+```{r}
 
 odds_ratios <- c((Y[1, 1] / Y[1, 2]) / (Y[2, 1] / Y[2, 2]))
 odds_ratios <- c(odds_ratios, (Y[1, 1] / Y[1, 2]) / (Y[2, 1] / Y[2, 2]))
@@ -68,7 +92,9 @@ risk <- odds_ratios / (1 + odds_ratios)
 allele_counts <- c(0, 1, 2)
 plot(allele_counts, risk, type = "b", pch = 19, col = "blue", main = "Risk of Disease by Number of M Alleles", xlab = "Genotype", ylab = "Risk")
 
+```
 # Question 4
+```{r}
 Cases <- c(112, 278, 150)
 Controls <- c(206, 348, 150)
 X <- rbind(Cases,Controls)
@@ -85,5 +111,8 @@ pvalue <- pchisq(A,df=1,lower.tail=FALSE)
 
 cat("Armitage Trend Tes:\n")
 cat("P-value:", pvalue, "\n")
+```
 
+The p-value of ~0.0002 suggest that we should reject the null hypothesis.
 
+# Question 5
