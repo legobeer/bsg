@@ -30,9 +30,10 @@ cat("P-value:", p_value, "\n")
 cat("Odds Ratio:", odds_ratio, "\n")
 
 ```
-The small p-value suggests a strong association of the alleles with the disease. The odds ratio of 0.74 tells us that the disease is more common for people with the allele aa.
+The small p-value suggests a strong association of the alleles with the disease. The odds ratio of 0.74 tells us that the disease is more common for people with the allele a.
 
-# Question 2
+# Question 2 and 3
+
 ```{r}
 # codominant test
 test <- chisq.test(X)
@@ -45,9 +46,10 @@ odds_ratios <- c(odds_ratios, (X[1, 3] / (X[1, 1] + X[1, 2])) / (X[2, 3] / (X[2,
 risk <- odds_ratios / (1 + odds_ratios)
 
 allele_counts <- c(0, 1, 2)
-plot(allele_counts, risk, type = "b", pch = 19, col = "blue", main = "Risk of Disease by Number of M Alleles", xlab = "Genotype", ylab = "Risk")
+plot(allele_counts, risk, type = "b", pch = 19, col = "blue", main = "Risk of Disease by Number of M Alleles codominant model", xlab = "Genotype", ylab = "Risk")
 ```
-We reject the null hypothesis that the probability of disease with all the genotypes is the same.
+
+
 ```{r}
 
 # Dominant test
@@ -66,7 +68,7 @@ odds_ratios <- c(odds_ratios, (Y[1, 2] / Y[1, 1]) / (Y[2, 2] / Y[2, 1]))
 risk <- odds_ratios / (1 + odds_ratios)
 
 allele_counts <- c(0, 1, 2)
-plot(allele_counts, risk, type = "b", pch = 19, col = "blue", main = "Risk of Disease by Number of M Alleles", xlab = "Genotype", ylab = "Risk")
+plot(allele_counts, risk, type = "b", pch = 19, col = "blue", main = "Risk of Disease by Number of M Alleles dominant model", xlab = "Genotype", ylab = "Risk")
 ```
 
 ```{r}
@@ -90,10 +92,18 @@ odds_ratios <- c(odds_ratios, (Y[1, 2] / Y[1, 1]) / (Y[2, 2] / Y[2, 1]))
 risk <- odds_ratios / (1 + odds_ratios)
 
 allele_counts <- c(0, 1, 2)
-plot(allele_counts, risk, type = "b", pch = 19, col = "blue", main = "Risk of Disease by Number of M Alleles", xlab = "Genotype", ylab = "Risk")
+plot(allele_counts, risk, type = "b", pch = 19, col = "blue", main = "Risk of Disease by Number of M Alleles recessive model", xlab = "Genotype", ylab = "Risk")
 
 ```
+
+
+
+All models have significantly low p-values, indicating a strong association between the genetic variant and the studied effect. The codominant and dominant models appear to show slightly stronger associations than the recessive model.
+
+ If the codominant model fitted perfectly with our data, it should form a straight line whith a null slope. Additionally, in the dominant model, a significant difference in risk is observed when at least one allele a is present. Hence, the dominant model appears to be the better fit.
+
 # Question 4
+
 ```{r}
 Cases <- c(112, 278, 150)
 Controls <- c(206, 348, 150)
@@ -115,4 +125,8 @@ cat("P-value:", pvalue, "\n")
 
 The p-value of ~0.0002 suggest that we should reject the null hypothesis.
 
+In other words, the significant trend observed in the distribution of genotypes suggests that the different genotypes may be significantly associated with the risk of Alzheimer's disease.
+
 # Question 5
+
+The results got we the Armitage trend test proved there is an association for this marker on the disease. Moreover, like we told before the best model was the dominant. We can declare, with the low p-value of the Armitage trend test, the association do exist and that the risk of being sick increases a lot if you have an allele a.
