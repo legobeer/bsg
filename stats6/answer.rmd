@@ -1,6 +1,21 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+# Practical 5 Statistical Genetics
+
+## Antonin Rosa
+
+## Hendrik Wellmann
+
+### Question 1 
+
+```{r}
 library(data.table)
 
-# Question 1
 data <- fread("YRI6.raw", header = FALSE, sep = " ")
 
 num_individuals <- nrow(data)
@@ -11,8 +26,11 @@ percentage_missing <- mean(is.na(data)) * 100
 cat("Number of individuals:", num_individuals, "\n")
 cat("Number of SNPs:", num_snps, "\n")
 cat("Percentage of missing data:", percentage_missing, "%\n")
+```
 
-# Question 2
+### Question 2
+
+```{r}
 genomic_data <- data[2:nrow(data), 7:ncol(data)]
 genomic_data[, (1:ncol(genomic_data)) := lapply(.SD, as.numeric), .SDcols = 1:ncol(genomic_data)]
 shared_mean <- matrix(c(NA), nrow = num_individuals, ncol = num_individuals)
@@ -32,10 +50,11 @@ for (i in 1:num_individuals) {
 
 print(shared_mean[1:5, 1:5])
 print(shared_sd[1:5, 1:5])
+```
 
+### Question 3
 
-# Question 3
-
+```{r}
 p0 <- matrix(c(NA), nrow = num_individuals, ncol = num_individuals)
 p2 <- matrix(c(NA), nrow = num_individuals, ncol = num_individuals)
 m <- matrix(c(NA), nrow = num_individuals, ncol = num_individuals)
@@ -55,35 +74,55 @@ print(p2[1:5, 1:5])
 print(m[1:5, 1:5])
 print(shared_mean[1:5, 1:5])
 print(all.equal(shared_mean, m))
+```
 
-# m = 1 - p0 + p2 holds.
+It holds because we can see that each element of m (m = 1 - p0 + p2) is equal to each element of shared_mean.
 
-# Question 4
+### Question 4
 
+```{r}
 plot(shared_mean, shared_sd, main = "m vs s", xlab = "m", ylab = "s", col = "blue", pch = 16)
 plot(p0, p2, main = "p0 vs p2", xlab = "p0", ylab = "p2", col = "green", pch = 16)
+```
 
-# Question 5
+#### m vs s : 
 
+**Cluster in the Top Left:**
+The clustered points in this region could indicate a group of individuals with similar genetic characteristics. This grouping might be due to close familial relationships or specific genetic similarities.
 
+**Isolated Point in the Bottom Right:**
+An isolated point suggests the presence of an individual or a small group of individuals with distinct genetic characteristics or differences from the majority. This could be due to unique genetic variations or atypical familial relationships.
+
+#### p0 vs p2 : 
+
+**Cluster on the Entire Bottom Part:**
+The concentration of points in the bottom part of the plot suggests that the majority of individuals share similar genetic characteristics in terms of *p0* and *p2*. This could result from genetic similarities within this population.
+
+**Isolated Point in the Top Left:**
+The presence of an isolated point in the top left suggests that there is an individual or a group of individuals that stand out from the others in terms of *p0* and *p2*. This could indicate unique genetic variations or distinct features.
+
+### Question 5
+
+```{r}
 m <- shared_mean
 s <- shared_sd
 family_relationship <- data[, c(3, 4)]
-colors <- rep("blue", nrow(data))  
-print(data[6,2] %in% family_relationship[[1]])
-print(data[6,2])
-print(family_relationship[, 1])
+colors <- rep("blue", nrow(data) - 1)  
 parent_offspring_indices <- which(family_relationship[, 1] > 0 | family_relationship[, 2] > 0)
-print(parent_offspring_indices)
-colors[parent_offspring_indices] <- "red"
+colors[parent_offspring_indices - 1] <- "red"
+parent <- c()
+for (i in 2:nrow(data)) {
+  print(data[i, 2] %in% family_relationship[[1]])
+  if (data[i, 2] %in% family_relationship[[1]] | data[i, 2] %in% family_relationship[[2]]) {
+    parent <- c(parent, i - 1)
+  }
+}
+print(parent)
+colors[parent] <- "red"
 
 plot(m, s, main = "Shared Mean vs Shared SD", xlab = "Shared Mean", ylab = "Shared SD", col = colors, pch = 16)
 legend("bottomleft", legend = c("Unrelated", "Parent-Offspring"), col = c("blue", "red"), pch = 16, cex = 0.8)
 
+```
 
-# Question 6
-
-if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-
-BiocManager::install("SNPRelate")
+We can see that all the majority of points present in the clusters have a family relationship. It affirms the hypothesis said before in question 4.
