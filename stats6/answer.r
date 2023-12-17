@@ -69,13 +69,18 @@ plot(p0, p2, main = "p0 vs p2", xlab = "p0", ylab = "p2", col = "green", pch = 1
 m <- shared_mean
 s <- shared_sd
 family_relationship <- data[, c(3, 4)]
-colors <- rep("blue", nrow(data))  
-print(data[6,2] %in% family_relationship[[1]])
-print(data[6,2])
-print(family_relationship[, 1])
+colors <- rep("blue", nrow(data) - 1)  
 parent_offspring_indices <- which(family_relationship[, 1] > 0 | family_relationship[, 2] > 0)
-print(parent_offspring_indices)
-colors[parent_offspring_indices] <- "red"
+colors[parent_offspring_indices - 1] <- "red"
+parent <- c()
+for (i in 2:nrow(data)) {
+  print(data[i, 2] %in% family_relationship[[1]])
+  if (data[i, 2] %in% family_relationship[[1]] | data[i, 2] %in% family_relationship[[2]]) {
+    parent <- c(parent, i - 1)
+  }
+}
+print(parent)
+colors[parent] <- "red"
 
 plot(m, s, main = "Shared Mean vs Shared SD", xlab = "Shared Mean", ylab = "Shared SD", col = colors, pch = 16)
 legend("bottomleft", legend = c("Unrelated", "Parent-Offspring"), col = c("blue", "red"), pch = 16, cex = 0.8)
@@ -83,7 +88,13 @@ legend("bottomleft", legend = c("Unrelated", "Parent-Offspring"), col = c("blue"
 
 # Question 6
 
-if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
+library(SNPRelate)
 
-BiocManager::install("SNPRelate")
+raw_data <- read.table("YRI6.raw", header = TRUE, sep = " ")
+sample_ids <- raw_data[, 2] 
+snp_ids <- names(raw_data[, 7:ncol(raw_data)])
+genotypes <- as.matrix(raw_data[, 7:ncol(raw_data), drop = FALSE]) 
+print(dim(genotypes))
+print(length(sample_ids))
+print(length(snp_ids))
+geno <- snpgdsCreateGeno(genmat = genotypes, sample.id = sample_ids, snp.id = snp_ids)
