@@ -97,4 +97,26 @@ genotypes <- as.matrix(raw_data[, 7:ncol(raw_data), drop = FALSE])
 print(dim(genotypes))
 print(length(sample_ids))
 print(length(snp_ids))
-geno <- snpgdsCreateGeno(genmat = genotypes, sample.id = sample_ids, snp.id = snp_ids)
+snpgdsCreateGeno("test.gds", genmat = t(genotypes), sample.id = sample_ids, snp.id = snp_ids)
+                 
+ 
+genofile <- snpgdsOpen("test.gds")
+snpset <- snpgdsLDpruning(genofile, ld.threshold=0.2)
+snpset.id <- unlist(unname(snpset))
+ibd <- snpgdsIBDMLE(genofile,maf=0.05, missing.rate=0.05,snp.id=snp_ids, num.thread=2)                
+ibd.coeff <- snpgdsIBDSelection(ibd)
+family_info <- raw_data[, c(3, 4)]
+
+
+colors <- ifelse(family_info[, 1] > 0 & family_info[, 2] > 0, "red", "blue")
+
+plot(ibd.coeff$k0, ibd.coeff$k1, col = colors, xlim = c(0, 1), ylim = c(0, 1),
+     xlab = "k0", ylab = "k1", main = "YRI samples (MLE)")
+
+legend("topright", legend = c("Unrelated", "Parent-Offspring"), col = c("blue", "red"), pch = 16, cex = 0.8)
+lines(c(0,1), c(1,0), col="black", lty=2)
+
+# Question 7
+
+
+
