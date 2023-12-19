@@ -118,5 +118,5 @@ lines(c(0,1), c(1,0), col="black", lty=2)
 
 # Question 7
 
-
+# In IBD probability plot there are pairs with very low k1 values marked as Parent-Offspring. Parent-Offspring relationships are usually associated with a k0 of 0 and a k1 > 0.5. This suggests that there are incorrectly specified family relationships in the data.
 
